@@ -24,9 +24,30 @@ app.post('/', async (req, res) => {
 		to: ['bracoagustin@gmail.com'],
 		subject: 'Contacto web',
 		html: `
-      <p>${name}</p>
-      <p>${email}</p>
-      <p>${message}</p>
+			<html lang="es">
+				<body style="background-color: #F5F5F4;">
+					<table width="100%" cellspacing="0" cellpadding="0">
+						<tr>
+							<td align="center">
+								<table width="600" cellspacing="0" cellpadding="0">
+									<tr>
+										<td align="center" style="padding: 20px 0;">
+											<h1 style="color: #333;">Contacto web</h1>
+										</td>
+									</tr>
+									<tr>
+										<td align="center" style="padding: 0 20px;">
+											<p style="color: #666;">Nombre: ${name}</p>
+											<p style="color: #666;">Correo: ${email}</p>
+											<p style="color: #666;">Mensaje: ${message}</p>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</body>
+			</html>
     `,
 	});
 
@@ -37,3 +58,9 @@ app.post('/', async (req, res) => {
 });
 
 app.listen(3000);
+
+{
+	/* <p>${name}</p>
+<p>${email}</p>
+<p>${message}</p> */
+}
