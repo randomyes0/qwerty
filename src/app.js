@@ -52,9 +52,9 @@ app.post('/', async (req, res) => {
 	});
 
 	if (error)
-		return res.status(400).json({ status: 'Error', message: 'The email was not sent', error });
+		return res.status(400).json({ status: 'Error', message: 'El mensaje no pudo ser enviado' });
 
-	return res.status(200).json({ status: 'Success', message: 'Email sent', data });
+	return res.status(200).json({ status: 'Enviado', message: 'Gracias por tu mensaje' });
 });
 
 app.listen(3000);
