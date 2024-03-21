@@ -12,6 +12,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+app.get('/', (req, res) => {
+	return res.status(200).json({ status: 'Success', message: 'Server running' });
+});
+
 app.post('/', async (req, res) => {
 	const { name, email, message } = req.body;
 
@@ -26,7 +30,8 @@ app.post('/', async (req, res) => {
     `,
 	});
 
-	if (error) return res.status(400).json({ status: 'Error', message: 'The email was not sent', error });
+	if (error)
+		return res.status(400).json({ status: 'Error', message: 'The email was not sent', error });
 
 	return res.status(200).json({ status: 'Success', message: 'Email sent', data });
 });
