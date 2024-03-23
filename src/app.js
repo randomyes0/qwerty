@@ -17,7 +17,13 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', async (req, res) => {
+	const { api_key } = req.headers;
+	if (!api_key | (api_key !== APIKEY))
+		return res.status(403).json({ status: 'Error', message: 'No estás autorizado.' });
+
 	const { name, email, message } = req.body;
+	if (!name | !email | !message)
+		return res.status(400).json({ status: 'Error', message: 'Faltan datos para enviar el mail.' });
 
 	const { data, error } = await resend.emails.send({
 		from: 'Portfolio <onboarding@resend.dev>',
@@ -58,9 +64,3 @@ app.post('/', async (req, res) => {
 });
 
 app.listen(3000);
-
-{
-	/* <p>${name}</p>
-<p>${email}</p>
-<p>${message}</p> */
-}
