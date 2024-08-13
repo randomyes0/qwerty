@@ -9,7 +9,9 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({
+    origin: "https://qwerty-jfsn.onrender.com",
+  }));
 
 app.get('/', (req, res) => {
 	return res.status(200).json({ status: 'Success', message: 'Server running' });
