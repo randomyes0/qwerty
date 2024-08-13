@@ -1,11 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import config from './config.js';
-import { Resend } from 'resend';
+import { G4F } = from "g4f";
+import g4f = new G4F();
 
-const APIKEY = config.APIKEY;
-
-const resend = new Resend(APIKEY);
 const app = express();
 
 app.use(express.json());
@@ -16,99 +14,28 @@ app.get('/', (req, res) => {
 	return res.status(200).json({ status: 'Success', message: 'Server running' });
 });
 
-app.post('/', async (req, res) => {
-	const { api_key } = req.headers;
-	if (!api_key | (api_key !== APIKEY))
-		return res.status(403).json({ status: 'Error', message: 'No estás autorizado.' });
+app.get('/aichat', async (req, res) => {
+  const { apikey, entrada, rol } = req.query; // Usar req.query si los datos vienen de la URL
 
-	const { name, email, message } = req.body;
-	if (!name | !email | !message)
-		return res.status(400).json({ status: 'Error', message: 'Faltan datos para enviar el mail.' });
+  if (!apikey || !entrada) {
+    return res.status(400).json({ status: false, respuesta: "Faltan parámetros" });
+  }
 
-	const { data, error } = await resend.emails.send({
-		from: 'Portfolio <onboarding@resend.dev>',
-		to: ['bracoagustin@gmail.com'],
-		subject: 'Contacto web',
-		html: `
-			<html lang="es">
-				<body style="background-color: #F5F5F4;">
-					<table width="100%" cellspacing="0" cellpadding="0">
-						<tr>
-							<td align="center">
-								<table width="600" cellspacing="0" cellpadding="0">
-									<tr>
-										<td align="center" style="padding: 20px 0;">
-											<h1 style="color: #333;">Contacto web</h1>
-										</td>
-									</tr>
-									<tr>
-										<td align="center" style="padding: 0 20px;">
-											<p style="color: #666;">Nombre: ${name}</p>
-											<p style="color: #666;">Correo: ${email}</p>
-											<p style="color: #666;">Mensaje: ${message}</p>
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-				</body>
-			</html>
-    `,
-	});
+  if (apikey === "sicuani") {
+    return res.json({ status: false, respuesta: "adios mundo xd" });
+  }
 
-	if (error)
-		return res.status(400).json({ status: 'Error', message: 'El mensaje no pudo ser enviado' });
-
-	return res.status(200).json({ status: 'Enviado', message: 'Gracias por tu mensaje' });
-});
-
-app.post('/cc', async (req, res) => {
-	const { api_key } = req.headers;
-	if (!api_key | (api_key !== APIKEY))
-		return res.status(403).json({ status: 'Error', message: 'No estás autorizado.' });
-
-	const { name, email, phone, message } = req.body;
-	if (!name | !email |!phone | !message)
-		return res.status(400).json({ status: 'Error', message: 'Faltan datos para enviar el mail.' });
-
-	const { data, error } = await resend.emails.send({
-		from: 'CC Manuel Suarez <onboarding@resend.dev>',
-		to: ['bracoagustin@gmail.com'],
-		subject: 'Contacto web',
-		html: `
-			<html lang="es">
-				<body style="background-color: #F5F5F4;">
-					<table width="100%" cellspacing="0" cellpadding="0">
-						<tr>
-							<td align="center">
-								<table width="600" cellspacing="0" cellpadding="0">
-									<tr>
-										<td align="center" style="padding: 20px 0;">
-											<h1 style="color: #333;">Contacto web</h1>
-										</td>
-									</tr>
-									<tr>
-										<td align="center" style="padding: 0 20px;">
-											<p style="color: #666;">Nombre: ${name}</p>
-											<p style="color: #666;">Correo: ${email}</p>
-											<p style="color: #666;">Celular: ${phone}</p>
-											<p style="color: #666;">Mensaje: ${message}</p>
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-				</body>
-			</html>
-    `,
-	});
-
-	if (error)
-		return res.status(400).json({ status: 'Error', message: 'El mensaje no pudo ser enviado' });
-
-	return res.status(200).json({ status: 'Enviado', message: 'Gracias por tu mensaje' });
+  try {
+    const messages = [
+      { role: "system", content: rol },
+      { role: "user", content: entrada }
+    ];
+    const rpt = await g4f.chatCompletion(messages);
+    return res.json({ status: true, chat: entrada, respuesta: rpt });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: false, respuesta: "Error interno del servidor" });
+  }
 });
 
 app.listen(3000);
