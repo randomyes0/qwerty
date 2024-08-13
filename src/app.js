@@ -6,8 +6,8 @@ import g4f = new G4F();
 
 const app = express();
 
-app.use(express.static('public'));
 app.use(express.json());
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
